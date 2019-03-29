@@ -1,0 +1,65 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - http://www.getcloudify.org/spec/cloudify/4.4/types.yaml
+  - plugin:cloudify-opencontrail-plugin?version=1.0.4.dev1
+
+inputs:
+  provisioning_deployment_name:
+    type: string
+    description: Name of openstack provisioning deployment name
+
+  network_policy_name:
+    type: string
+
+dsl_definitions:
+  api_configs: &api_configs
+    - user: { get_secret: opencontrail_user }
+      password: { get_secret: opencontrail_password }
+      tenant: { get_secret: opencontrail_tenant }
+      ip: { get_secret: opencontrail_ip }
+      port: { get_secret: opencontrail_port }
+      domain: { get_secret: opencontrail_domain }
+
+node_templates:
+
+  left_network:
+    type: cloudify.nodes.opencontrail.VirtualNetwork
+    properties:
+      api_configs: *api_configs
+      name: { get_capability: [ {get_input: provisioning_deployment_name}, left_network_name ] }
+      use_existing_resource: true
+
+  right_network:
+    type: cloudify.nodes.opencontrail.VirtualNetwork
+    properties:
+      api_configs: *api_configs
+      name: { get_capability: [ {get_input: provisioning_deployment_name}, right_network_name ] }
+      use_existing_resource: true
+
+  network_policy:
+    type: cloudify.nodes.opencontrail.NetworkPolicy
+    properties:
+      api_configs: *api_configs
+      name: { get_input: network_policy_name }
+      policy_rule_list:
+        - direction: "<>"
+          protocol: "any"
+          src_addresses:
+            - virtual_network: { get_attribute: [left_network, fq_name] }
+          src_ports:
+            - end_port: -1
+              start_port: -1
+          dst_addresses:
+            - virtual_network: { get_attribute: [right_network, fq_name] }
+          dst_ports:
+            - end_port: -1
+              start_port: -1
+          action_list:
+            simple_action: "pass"
+          ethertype: "IPv4"
+    relationships:
+      - type: cloudify.relationships.opencontrail.attatch_network_policy_to_network
+        target: left_network
+      - type: cloudify.relationships.opencontrail.attatch_network_policy_to_network
+        target: right_network

@@ -6,11 +6,6 @@ imports:
 
 inputs:
 
-  key_name:
-    description: Name of the key on Openstack
-  key_path:
-    description: Path to the key on Cloudify Manager
-
   security_group_name:
     type: string
 
@@ -26,11 +21,6 @@ inputs:
   right_network_subnet_name:
     type: string
   right_subnet_cidr:
-    type: string
-
-  management_network_name:
-    type: string
-  management_subnet_name:
     type: string
 
   image:
@@ -53,66 +43,26 @@ node_templates:
     properties:
       image: { get_input: image }
       flavor: { get_input: flavor }
-      management_network_name: { get_input: management_network_name }
       install_agent: false
       openstack_config: *openstack_config
     relationships:
       - target: security_group
         type: cloudify.openstack.server_connected_to_security_group
-      - target: management_port
-        type: cloudify.relationships.connected_to
       - target: left_port
         type: cloudify.relationships.connected_to
-      - target: keypair
-        type: cloudify.openstack.server_connected_to_keypair
 
   right_vm:
     type: cloudify.openstack.nodes.Server
     properties:
       image: { get_input: image }
       flavor: { get_input: flavor }
-      management_network_name: { get_input: management_network_name }
       install_agent: false
       openstack_config: *openstack_config
     relationships:
       - target: security_group
         type: cloudify.openstack.server_connected_to_security_group
-      - target: management_port
-        type: cloudify.relationships.connected_to
       - target: right_port
         type: cloudify.relationships.connected_to
-      - target: keypair
-        type: cloudify.openstack.server_connected_to_keypair
-
-  # networks
-  management_network:
-    type: cloudify.openstack.nodes.Network
-    properties:
-      openstack_config: *openstack_config
-      resource_id: { get_input: management_network_name }
-      use_external_resource : true
-
-  management_subnet:
-    type: cloudify.openstack.nodes.Subnet
-    properties:
-      openstack_config: *openstack_config
-      resource_id: { get_input: management_subnet_name }
-      use_external_resource : true
-    relationships:
-      - target: management_network
-        type: cloudify.relationships.contained_in
-
-  management_port:
-    type: cloudify.openstack.nodes.Port
-    properties:
-      openstack_config: *openstack_config
-    relationships:
-      - type: cloudify.relationships.contained_in
-        target: management_network
-      - type: cloudify.relationships.depends_on
-        target: management_subnet
-      - target: security_group
-        type: cloudify.openstack.port_connected_to_security_group
 
   left_network:
     type: cloudify.openstack.nodes.Network
@@ -138,8 +88,6 @@ node_templates:
     type: cloudify.openstack.nodes.Port
     properties:
       openstack_config: *openstack_config
-      #use_external_resource : false
-      #fixed_ip: { get_input: left_ip }
     relationships:
       - type: cloudify.relationships.contained_in
         target: left_network
@@ -172,8 +120,6 @@ node_templates:
     type: cloudify.openstack.nodes.Port
     properties:
       openstack_config: *openstack_config
-      #use_external_resource : false
-      #fixed_ip: { get_input: right_ip }
     relationships:
       - type: cloudify.relationships.contained_in
         target: right_network
@@ -190,10 +136,10 @@ node_templates:
       use_external_resource: true
       resource_id: { get_input: security_group_name }
 
-  keypair:
-    type: cloudify.openstack.nodes.KeyPair
-    properties:
-      private_key_path: { get_input: key_path }
-      use_external_resource: true
-      resource_id: { get_input: key_name }
-      openstack_config: *openstack_config
+capabilities:
+  left_network_name:
+    description: Name of created left network
+    value: { get_attribute: [right_network, external_name] }
+  right_network_name:
+    description: Name of created right network
+    value: { get_attribute: [left_network, external_name] }

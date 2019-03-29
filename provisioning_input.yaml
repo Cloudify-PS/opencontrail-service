@@ -1,5 +1,3 @@
-key_name: cm_43
-key_path: '/etc/cloudify/rackspace.pem'
 security_group_name: all
 
 left_network_name: left_net
@@ -10,8 +8,5 @@ right_network_name: right_net
 right_network_subnet_name: right_subnet
 right_subnet_cidr: 10.10.2.0/24
 
-management_network_name: cm_network
-management_subnet_name: cm_subnet
-
-image: CentOS-7-x86_64-GenericCloud
-flavor: m1.small
+image: cirros-0.4.0-x86_64
+flavor: tiny
