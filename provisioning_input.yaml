@@ -1,4 +1,4 @@
-security_group_name: all
+security_group_name: opencontrail_sg
 
 left_network_name: left_net
 left_network_subnet_name: left_subnet

@@ -5,12 +5,12 @@ This repository contains blueprints for service creation on opencontrail integra
 Purpose of this demo is to show Cloudify Manager interacting with Openstack and Opencontrail 
 in order to create a service that enable traffic to flow between different openstack networks. 
 
-The setup looks as following:
+The setup looks as following:\
 ![setup](opencontrail%20demo.png)
 
 Its divided into a two parts:
 1. Provisioning - Creates networks, VMs and security group on openstack,
-2. Service - Creates Network Policy on Opencontrail what enables VMs to connect.
+2. Service - Fetches Networks and creates Network Policy on Opencontrail what enables VMs to connect between networks.
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ Its divided into a two parts:
 Opencontrail should be intergrated with openstack so the resources would be mapped from openstack to opencontrail 
 and the other way. 
 
-openstack should have a cirros image uploaded to glance in order to create VM instance from it. 
+Openstack should have a cirros image uploaded to glance in order to create VM instance from it. 
 Cirros images for openstack can be obtained from following page [cirros_images](http://download.cirros-cloud.net/).
 
 ### Cloudify Manager
@@ -57,7 +57,7 @@ Following plugins must be installed:
 
 #### Provisioning
 First step is acheived using *provisioning.yaml* blueprint.
-The blueprint creates networks (right and left), its subnets and ports and fetches a existing security group.
+The blueprint creates networks (right and left), its subnets and ports and creates security group.
 
 ##### Inputs
 Before creating deployment, prepare input file (*provisioning_inputs.yaml*). The following inputs must be specified:
