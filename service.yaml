@@ -2,7 +2,7 @@ tosca_definitions_version: cloudify_dsl_1_3
 
 imports:
   - http://www.getcloudify.org/spec/cloudify/4.4/types.yaml
-  - plugin:cloudify-opencontrail-plugin?version=1.0.4.dev1
+  - plugin:cloudify-opencontrail-plugin
 
 inputs:
   provisioning_deployment_name:
