@@ -2,39 +2,62 @@ tosca_definitions_version: cloudify_dsl_1_3
 
 imports:
   - http://www.getcloudify.org/spec/cloudify/4.4/types.yaml
-  - plugin:cloudify-openstack-plugin
+  - plugin:cloudify-openstack-plugin?version=2.14.7
 
 inputs:
 
   security_group_name:
     type: string
+    default: opencontrail_sg
+    description: security group name to use
 
   left_network_name:
     type: string
+    default: left_net
+    description: left side (LAN/branch) network name to set
+
   left_network_subnet_name:
     type: string
+    default: left_subnet
+    description: left side (LAN/branch) subnet name to set
+
   left_subnet_cidr:
     type: string
+    default: 10.10.1.0/24
+    description: left side (LAN/branch) network CIDR in format of x.x.x.x/y
 
   right_network_name:
     type: string
+    default: right_net
+    description:  right side (WAN/internet) network name to set
+
   right_network_subnet_name:
     type: string
+    default: right_subnet
+    description: right side (WAN/internet) subnet name to set
+
   right_subnet_cidr:
     type: string
+    default: 10.10.2.0/24
+    description: right side (WAN/internet) network CIDR in format of x.x.x.x/y
 
   image:
     type: string
+    default: cirros-0.4.0-x86_64
+    description: VM image for the service instance
+
   flavor:
     type: string
+    default: tiny
+    description:  openstack flavor name to use for the VM instance
 
 dsl_definitions:
   openstack_config: &openstack_config
-    username: { get_secret: keystone_username }
-    password: { get_secret: keystone_password }
-    tenant_name: { get_secret: keystone_tenant_name }
-    auth_url: { get_secret: keystone_url }
-    region: { get_secret: keystone_region }
+    username: { get_secret: opencontrail_keystone_username }
+    password: { get_secret: opencontrail_keystone_password }
+    tenant_name: { get_secret: opencontrail_keystone_tenant_name }
+    auth_url: { get_secret: opencontrail_keystone_url }
+    region: { get_secret: opencontrail_keystone_region }
 
 node_templates:
 
