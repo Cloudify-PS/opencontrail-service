@@ -1,9 +1,9 @@
 # Opencontrail service
-This repository contains blueprints for service creation on opencontrail integrated with openstack. 
+This repository contains blueprints for service creation on opencontrail integrated with openstack.
 
 ## Overview
-Purpose of this demo is to show Cloudify Manager interacting with Openstack and Opencontrail 
-in order to create a service that enable traffic to flow between different openstack networks. 
+Purpose of this demo is to show Cloudify Manager interacting with Openstack and Opencontrail
+in order to create a service that enable traffic to flow between different openstack networks.
 
 The setup looks as following:\
 ![setup](opencontrail%20demo.png)
@@ -15,10 +15,10 @@ Its divided into a two parts:
 ## Prerequisites
 
 ### Openstack and Opencontrail
-Opencontrail should be intergrated with openstack so the resources would be mapped from openstack to opencontrail 
-and the other way. 
+Opencontrail should be intergrated with openstack so the resources would be mapped from openstack to opencontrail
+and the other way.
 
-Openstack should have a cirros image uploaded to glance in order to create VM instance from it. 
+Openstack should have a cirros image uploaded to glance in order to create VM instance from it.
 Cirros images for openstack can be obtained from following page [cirros_images](http://download.cirros-cloud.net/).
 
 ### Cloudify Manager
@@ -28,16 +28,16 @@ Cloudify Manager used in test had following properties:
     - CPU: 2
     - RAM: 4 GB
     - Disk: 40 GB
-    
+
 #### Secrets:
 The deployments use secrets for holding openstack and opencontrail credentials.
 
 Openstack:
-- keystone_username
-- keystone_password
-- keystone_tenant_name
-- keystone_url
-- keystone_region
+- opencontrail_keystone_username
+- opencontrail_keystone_password
+- opencontrail_keystone_tenant_name
+- opencontrail_keystone_url
+- opencontrail_keystone_region
 
 Opencontrail:
 - opencontrail_user
@@ -68,10 +68,10 @@ Before creating deployment, prepare input file (*provisioning_inputs.yaml*). The
 - *right_network_name*: Name of the right network
 - *right_network_subnet_name*: Name of the right subnet
 - *right_subnet_cidr*: Right subnet cidr
-- *image*: Name of the image used for VM instantiation. 
+- *image*: Name of the image used for VM instantiation.
 In the tests I used cirros image as it doesnt require private key to be assigned so password authentication from openstack console is possible.
 cirros-0.4.0-x86_64 image was used for it.
-- *flavor*: Openstack flavor for cirros VMs. 
+- *flavor*: Openstack flavor for cirros VMs.
 CirrOS is a minimal Linux distribution so flavor can be minimal (1 CPU, 512 MB RAM and 10BG disk).
 
 ##### Installation
@@ -81,7 +81,7 @@ To install the setup using cfy, execute following command:
 
 ##### Verification
 
-After installation the VMs should be available from Openstack dashboard. 
+After installation the VMs should be available from Openstack dashboard.
 VMs are instantiated in two different networks and its impossible for them to reach each other, to verify it, open openstack console of one VM and try to ping the other.
 Default credentials for cirros are cirros/gocubsgo.
 
@@ -99,4 +99,3 @@ Service blueprint needs only two inputs to be specified:
 ##### Verification
 
 After creation of network policy, the VMs should be able to reach each other ie. via ping.
-
