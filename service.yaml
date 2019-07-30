@@ -2,15 +2,18 @@ tosca_definitions_version: cloudify_dsl_1_3
 
 imports:
   - http://www.getcloudify.org/spec/cloudify/4.4/types.yaml
-  - plugin:cloudify-opencontrail-plugin
+  - plugin:cloudify-opencontrail-plugin?version=2.14.7
 
 inputs:
   provisioning_deployment_name:
     type: string
-    description: Name of openstack provisioning deployment name
+    description: Name of provisioning deployment name to use (using provisioning.yaml)
+    default: opencontrail-provisioning
 
   network_policy_name:
     type: string
+    default: network_policy
+    description:  network policy name to create
 
 dsl_definitions:
   api_configs: &api_configs
